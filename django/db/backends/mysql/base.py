@@ -404,6 +404,8 @@ class DatabaseWrapper(BaseDatabaseWrapper):
             kwargs['client_flag'] = CLIENT.FOUND_ROWS
             kwargs.update(settings_dict['OPTIONS'])
             self.connection = Database.connect(**kwargs)
+            if settings_dict.get("AUTOCOMMIT", False):
+                self.connection.autocommit(True)
             self.connection.encoders[SafeText] = self.connection.encoders[six.text_type]
             self.connection.encoders[SafeBytes] = self.connection.encoders[bytes]
             connection_created.send(sender=self.__class__, connection=self)
