@@ -8,6 +8,7 @@ from __future__ import unicode_literals
 import datetime
 import re
 import sys
+import time
 import warnings
 
 try:
@@ -365,11 +366,15 @@ class DatabaseWrapper(BaseDatabaseWrapper):
         self.creation = DatabaseCreation(self)
         self.introspection = DatabaseIntrospection(self)
         self.validation = DatabaseValidation(self)
+        self.last_ping = 0
 
     def _valid_connection(self):
         if self.connection is not None:
             try:
-                self.connection.ping()
+                now = time.time()
+                if now - self.last_ping > 30:
+                    self.connection.ping()
+                    self.last_ping = now
                 return True
             except DatabaseError:
                 self.connection.close()
