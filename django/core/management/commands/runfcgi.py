@@ -4,6 +4,9 @@ class Command(BaseCommand):
     help = "Runs this project as a FastCGI application. Requires flup."
     args = '[various KEY=val options, use `runfcgi help` for help]'
 
+    # Break database dependency to launch django
+    requires_model_validation = False
+
     def handle(self, *args, **options):
         from django.conf import settings
         from django.utils import translation
